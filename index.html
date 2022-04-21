@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- AWP_In_Variable Name='"P_marcha"' -->
+    <!-- AWP_In_Variable Name='"P_Paro"' -->
+    <!-- AWP_In_Variable Name='"FC1_inicio"' -->
+    <!-- AWP_In_Variable Name='"FC2_carga"' -->
+    <!-- AWP_In_Variable Name='"FC3_descarga"' -->
+
+    <!-- AWP_Enum_Def Name="listaEstados" Values='0:"POSICIÓN INICIAL", 1:"AVANCE A CARGA", 2:"CARGANDO", 3:"AVANCE A DESCARGA", 4:"DESCARGANDO", 5:"RETROCESO A INICIO"' -->
+    <!-- AWP_Enum_Ref Name='"Estado"' Enum="listaEstados" -->
+
+    <meta charset="UTF-8">
+    <meta name="description" content="ARI - Industria Informatikako webguneak 
+    sortzeko baliabideen tutoriala" />
+    <meta name="keywords" content="ARI,Automatizazioa,SIEMENS,TIA,
+    web,tutoriala" />
+    <meta name="author" content="Zure izena: JI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>141DB-S7-1500-VAGONETA</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/styles-table-variables.css">
+    <script src="./js/script.js" type="text/javascript" > 
+    
+  </script>
+</head>
+
+<body>
+<main>
+<div id="dvHMI">
+    <div id="dvIzq">
+        <div id="dvBotonera">
+            <div><h4>BOTONES</h4></div>
+            <div class="btnMarcha"><span>MARCHA</span></div>
+            <div class="btnParo"><span>PARO</span></div>
+        </div>
+        <div id="dvPilotos">
+            <div><h4>PILOTOS</h4></div>
+            <div id="pilotoVerde"><img src="./img/pilotoOFF.JPG" ></div>
+            <div id="pilotoRojo"><img src="./img/pilotoOFF.JPG" ></div>
+        </div>
+    </div>
+    <div id="dvProceso">
+        <div id="dvCabecera">
+            <p><span>ESTADO:</span>&nbsp;&nbsp;<span id="spEstado">:="Estado":</span>&nbsp;&nbsp;<span id="spBarra"><progress max="100" value="0" hidden></progress></span></p>
+            <p><span>NUM. CICLOS: </span>&nbsp;&nbsp;<span id="spContadorCiclos">:="ContadorCiclos":</span></p>
+        </div>
+        <div id="dvDibujos">
+            <table>
+                <tr><th>POSICIÓN INICIO</th><th></th><th>ESTACIÓN CARGA</th><th></th><th>ESTACIÓN DESCARGA</th></tr>
+                <tr><td></td><td></td><td id="tdTolva"><img src="./img/tolva.jpg"/></td><td></td><td></td></tr>
+                <tr>
+                    <td></td>
+                    <td id="tdRetroceso1"><img src="./img/flechas-verde-back.gif" hidden/></td>
+                    <td id="tdGrano"><img src="./img/granoCayendo.gif" hidden/></td>
+                    <td id="tdRetroceso2"><img src="./img/flechas-verde-back.gif" hidden/></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td id="tdVagoneta0"><img src="./img/vagoneta.png" hidden/></td>
+                    <td id="tdAvance1"><img src="./img/flechas-12.gif" hidden/></td>
+                    <td id="tdVagoneta2"><img src="./img/vagoneta.png" hidden/></td>
+                    <td id="tdAvance3"><img src="./img/flechas-12.gif" hidden/></td>
+                    <td id="tdVagoneta4"><img src="./img/vagonetaDesc.gif" hidden/></td>
+                </tr>
+                <tr><td id="tdRailes" colspan="5"></td></tr>
+                <tr>
+                    <td id="tdFC1">
+                        <form id="formFC1" method="POST" action="">
+                        <img src="./img/finalCarreraOFF.png"/>
+                        <input type="hidden" name='"FC1_inicio"'  value="1"/>
+                        <input type="hidden" name='"FC2_carga"'  value="0"/>
+                        <input type="hidden" name='"FC3_descarga"'  value="0"/>
+                        </form>
+                    </td>
+                    <td id="td2carga"></td>
+                    <td id="tdFC2">
+                        <form id="formFC2" method="POST" action="">
+                        <img src="./img/finalCarreraOFF.png"/>
+                        <input type="hidden" name='"FC1_inicio"'  value="0"/>
+                        <input type="hidden" name='"FC2_carga"'  value="1"/>
+                        <input type="hidden" name='"FC3_descarga"'  value="0"/>
+                        <input type="hidden" name='"P_marcha"'  value="0"/>
+                        </form>
+                    </td>
+                    <td id="td2descarga"></td>
+                    <td id="tdFC3">
+                        <form id="formFC3" method="POST" action="">
+                            <img src="./img/finalCarreraOFF.png"/>
+                            <input type="hidden" name='"FC1_inicio"'  value="0"/>
+                            <input type="hidden" name='"FC2_carga"'  value="0"/>
+                            <input type="hidden" name='"FC3_descarga"'  value="1"/>
+                            <input type="hidden" name='"P_marcha"'  value="0"/>
+                            </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="dvDatos">
+    <section id="Estados">
+        <h1>ESTADOS</h1>
+        <table class="minimalistBlack">
+            <caption>Visualización de estados del proceso</caption>
+            <thead>
+                <tr><th>Reposo</th><th>Avance a carga</th><th>Carga</th><th>Avance a descarga</th><th>Descarga</th><th>Retroceso</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>:="E0-Reposo":</td><td>:="E1-avance_a_carga":</td><td>:="E2-carga":</td><td>:="E3-avance_a_descarga":</td><td>:="E4-descarga":</td><td>:="E5-retroceso":</td></tr>
+            </tbody>
+            <tfoot>
+                <tr><td colspan="6">0=no está en ese estado / 1=está en ese estado</td></tr>
+            </tfoot>
+        </table>
+    </section>
+    <section id="Salidas">
+        <h1>SALIDAS</h1>
+        <table class="minimalistBlack">
+            <caption>Visualización de las salidas del proceso</caption>
+            <thead>
+                <tr><th>Luz Roja</th><th>Luz Verde</th><th>Zumbador</th><th>Descargando</th><th>Motor Avanza</th><th>Motor Retrocede</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>:="Luz_verde":</td><td>:="Luz_roja":</td><td>:="Zumbador":</td><td>:="Valvula":</td><td>:="Motor_avanza":</td><td>:="Motor_retrocede":</td></tr>
+            </tbody>
+            <tfoot>
+                <tr><td colspan="6">0=OFF / 1=ON</td></tr>
+            </tfoot>
+        </table>
+    </section>
+    <section id="Entradas">
+        <form method="POST" action="" id="form01">
+        <h1>ENTRADAS</h1>
+        <table class="minimalistBlack">
+            <caption>Activación de las ENTRADAS del proceso</caption>                
+            <tbody>
+                <tr>
+                    <td>
+                        <label for="marcha_for">Marcha</label>
+                        <input type="text" name='"P_marcha"' id="marcha_id" value=':="P_marcha":'/>
+                    </td>
+
+                    <td>
+                        <label for="paro_for">Paro</label>
+                        <input type="text" name='"P_Paro"' id="paro_id" value=':="P_Paro":'/>
+                    </td>
+                    
+                    <td>
+                        <label for="fc1_for">FC inicio</label>
+                        <input type="text" name='"FC1_inicio"' id="fc1_id" value=':="FC1_inicio":'/>
+                    </td>
+
+                    <td>
+                        <label for="fc2_for">FC carga</label>
+                        <input type="text" name='"FC2_carga"' id="fc2_id" value=':="FC2_carga":'/>
+                    </td>
+
+                    <td>
+                        <label for="fc3_for">FC descarga</label>
+                        <input type="text" name='"FC3_descarga"' id="fc3_id" value=':="FC3_descarga":'/>
+                    </td>
+                </tr>   
+                
+                <tr><td colspan="5"><input type="submit" value="Bidali" id="btnSend"></td></tr>
+            </tbody>
+        </table>
+        </form>
+    </section>
+</div>
+</main>
+<form id="marchaON" method="POST" action="">
+    <input type="hidden" name='"P_marcha"' value="1"/> 
+</form>   
+<form id="marchaOFF" method="POST" action="">
+    <input type="hidden" name='"P_marcha"' value="0"/> 
+</form>
+<audio id="mp3Sirena" loop>
+    <source src="./mp3/ALARME2.mp3" type="audio/mp3">
+    Tu navegador no soporta audio
+  </audio>
+</body>
+
+</html>
